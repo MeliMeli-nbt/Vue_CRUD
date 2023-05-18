@@ -13,10 +13,10 @@
               for="grid-password"
               >Username</label
             ><input
-              type="username"
+              type="text"
               class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-              placeholder="Username" 
-              v-model="username"/>
+              placeholder="Username"
+              v-model="username" />
           </div>
           <div class="relative w-full mb-3">
             <label
@@ -26,8 +26,8 @@
             ><input
               type="password"
               class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-              placeholder="Password" 
-              v-model="password"/>
+              placeholder="Password"
+              v-model="password" />
           </div>
           <div class="text-center mt-6">
             <button
@@ -40,38 +40,48 @@
         </form>
       </div>
     </div>
+    <Notification :message="errors.message" :key="errors.message" />
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
+import Notification from "../components/Notification.vue";
 export default {
   name: "LogIn",
+  components: {
+    Notification
+  },
   data() {
     return {
       username: "",
       password: "",
-      errors: []
+      errors: [],
     };
   },
   methods: {
     async submitForm() {
       const formData = {
         username: this.username,
-        password: this.password
-      }
+        password: this.password,
+      };
 
       await axios
-                .post('/api/login', formData)
-                .then((response) => {
-                  const role = response.data.role;
-                  this.$store.commit('setRole', role);
-                  const toPath = this.$route.query.to || '/dashboard'
-                  this.$router.push(toPath)
-                })
-                .catch(error => {
-                  console.log(error);
-                })
+        .post("/api/login", formData)
+        .then((response) => {
+          this.$store.commit("setToken", response.data.token);
+          const toPath = this.$route.query.to || "/dashboard";
+          this.$router.push(toPath);
+        })
+        .catch((error) => {
+          if (error.response) {
+            for (const property in error.response.data) {
+              this.errors.message = `${error.response.data[property]}`;
+            }
+          } else {
+            this.errors.message = "Something went wrong. Please try again";
+          }
+        });
     },
   },
 };

@@ -102,30 +102,34 @@
 
 <script>
 import axios from "axios";
+import Notification from "./Notification.vue";
 export default {
   name: "ModalSignUp",
+  components: {
+    Notification
+  },
   data() {
     return {
       username: "",
       password: "",
       cfpassword: "",
-      errors: []
+      errors: [],
     };
   },
   props: {
-    showModalSignUp: Boolean
+    showModalSignUp: Boolean,
   },
   methods: {
     submitForm() {
       this.errors = [];
       if (this.username === "") {
-        this.errors.push("The username is missing");
+        this.errors.message = "The username is missing";
       }
       if (this.password === "") {
-        this.errors.push("The password is too short");
+        this.errors.message = "The password is missing";
       }
       if (this.password !== this.cfpassword) {
-        this.errors.push("The passwords doesn't match");
+        this.errors.message = "The confirm password is incorrect";
       }
       if (!this.errors.length) {
         const formData = {
@@ -135,20 +139,18 @@ export default {
         axios
           .post("/api/accounts", formData)
           .then((response) => {
-            this.$router.push('/dashboard/boardEmployee')
+            this.$router.push("/dashboard/boardEmployee");
             const id = response.data.account_id;
-            this.$store.commit('setAccountId', id);
+            this.$store.commit("setAccountId", id);
           })
           .catch((error) => {
             if (error.response) {
               for (const property in error.response.data) {
-                this.errors.push(
-                  `${property}: ${error.response.data[property]}`
-                );
+                this.errors.message = `${error.response.data[property]}`;
               }
               console.log(JSON.stringify(error.response.data));
             } else if (error.message) {
-              this.errors.push("Something went wrong. Please try again");
+              this.errors.message = "Something went wrong. Please try again";
             }
           });
       }

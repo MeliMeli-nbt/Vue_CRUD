@@ -181,7 +181,7 @@ export default {
     employeeId: Number
   },
   mounted() {
-    axios.get(`/api/employees/${this.employeeId}`)
+    axios.get(`/api/edit/${this.employeeId}`)
       .then(res => {
         this.employeeData = res.data;
       })
@@ -190,7 +190,7 @@ export default {
       });
   },
   methods: {
-    submitForm() {
+    async submitForm() {
       this.errors = [];
       if (this.employeeData.name === "") {
         this.errors.push("The name is missing");
@@ -214,7 +214,7 @@ export default {
       }
       if (!this.errors.length) {
         const formData = this.employeeData;
-        axios
+        await axios
           .put(`/api/employees/${this.employeeId}`, formData)
           .then((response) => {
             this.$emit("submitForm");

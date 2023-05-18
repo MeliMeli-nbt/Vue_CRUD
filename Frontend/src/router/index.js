@@ -3,6 +3,7 @@ import store from '../store';
 
 import Home from '../views/Home.vue';
 import BoardEmployee from '../views/BoardEmployee.vue';
+import BoardEmployeeUser from '../views/BoardEmployeeUser.vue';
 import DashBoard from '../views/DashBoard.vue';
 import BoardAccount from '../views/BoardAccount.vue';
 import LogIn from '../views/LogIn.vue';
@@ -35,6 +36,11 @@ const routes = [
         path: 'boardEmployee',
         name: 'BoardEmployee',
         component: BoardEmployee
+      },
+      {
+        path: 'boardEmployeeUser',
+        name: 'BoardEmployeeUser',
+        component: BoardEmployeeUser
       },
       {
         path: 'boardAccount',

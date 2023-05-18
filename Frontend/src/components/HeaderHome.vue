@@ -61,7 +61,7 @@
                   My Account
                 </router-link>
               </template>
-              
+
               <template v-else>
                 <router-link
                   to="/login"

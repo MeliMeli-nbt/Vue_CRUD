@@ -16,32 +16,30 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              class="bg-gray-900 hover:text-gray-200"
-              v-for="epl in employee"
-              :key="epl.id">
-              <td class="p-3">{{ epl.id }}</td>
-              <td class="p-3">{{ epl.name }}</td>
-              <td class="p-3">{{ epl.age }}</td>
-              <td class="p-3">{{ epl.gender }}</td>
-              <td class="p-3">{{ epl.email }}</td>
-              <td class="p-3">{{ epl.address }}</td>
-              <td class="p-3">{{ epl.phone }}</td>
-              <td class="p-3">
-                <button
-                  class="text-gray-400 hover:text-green-500 mx-2"
-                  @click="getEmployeeId(epl.id)">
-                  <i class="material-icons-outlined text-base">edit</i>
-                </button>
-                <template v-if="$store.state.isAuthenAdmin">
+              <tr
+                class="bg-gray-900 hover:text-gray-200"
+                v-for="epl in listEmployee"
+                :key="epl.id">
+                <td class="p-3">{{ epl.id }}</td>
+                <td class="p-3">{{ epl.name }}</td>
+                <td class="p-3">{{ epl.age }}</td>
+                <td class="p-3">{{ epl.gender }}</td>
+                <td class="p-3">{{ epl.email }}</td>
+                <td class="p-3">{{ epl.address }}</td>
+                <td class="p-3">{{ epl.phone }}</td>
+                <td class="p-3">
+                  <button
+                    class="text-gray-400 hover:text-green-500 mx-2"
+                    @click="getEmployeeId(epl.id)">
+                    <i class="material-icons-outlined text-base">edit</i>
+                  </button>
                   <button
                     class="text-gray-400 hover:text-green-500 ml-2"
                     @click="deleteEmployee(epl.id)">
                     <i class="material-icons-round text-base">delete_outline</i>
                   </button>
-                </template>
-              </td>
-            </tr>
+                </td>
+              </tr>
           </tbody>
         </table>
       </div>
@@ -76,6 +74,7 @@
       @submitForm="handleDelete"
       @cancelForm="handleCancel">
     </ModalDeleteEmployee>
+    <Notification :message="errors.message" :key="errors.message" />
   </div>
 </template>
 
@@ -93,12 +92,13 @@ export default {
   },
   data() {
     return {
-      employee: {},
+      listEmployee: {},
       showModalEdit: false,
       showModalAdd: false,
       showModalDeleteEmployee: false,
       employeeId: null,
-      timeout: null
+      timeout: null,
+      errors: []
     };
   },
   mounted() {
@@ -108,9 +108,15 @@ export default {
     async getListEmployees() {
       try {
         const response = await axios.get("/api/employees");
-        this.employee = response.data;
+        this.listEmployee = response.data;
       } catch (error) {
-        console.log(error);
+        if (error.response) {
+          for (const property in error.response.data) {
+            this.errors.message = `${error.response.data[property]}`;
+          }
+        } else {
+          this.errors.message = "Something went wrong. Please try again";
+        }
       }
     },
     handleSubmit: function () {
@@ -139,7 +145,7 @@ export default {
     },
   },
   watch: {
-    employee: {
+    listEmployee: {
       deep: true,
       handler() {
         clearTimeout(this.timeout);

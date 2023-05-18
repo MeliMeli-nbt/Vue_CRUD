@@ -22,8 +22,14 @@
               <td class="p-3">{{ act.password }}</td>
               <td class="p-3">{{ act.role }}</td>
               <td class="p-3">
-                <button class="text-gray-400 hover:text-green-500 ml-2"
-                @click="deleteAccount( act.account_id )">
+                <button
+                  class="text-gray-400 hover:text-green-500 mx-2"
+                  @click="grantPermission(act.account_id, act.role)">
+                  <i class="material-icons-outlined text-base">edit</i>
+                </button>
+                <button
+                  class="text-gray-400 hover:text-green-500 ml-2"
+                  @click="deleteAccount(act.account_id)">
                   <i class="material-icons-round text-base">delete_outline</i>
                 </button>
               </td>
@@ -44,25 +50,26 @@
       </div>
     </template>
     <ModalSignUp
-    :showModalSignUp="showModalSignUp"
-    @submitFormAccount="handleSubmit"
-    @cancelForm = "handleCancel">
+      :showModalSignUp="showModalSignUp"
+      @submitFormAccount="handleSubmit"
+      @cancelForm="handleCancel">
     </ModalSignUp>
     <ModalDeleteAccount
-    v-if="accountId !== null"
-    :showModalDeleteAccount="showModalDeleteAccount"
-    :accountId="accountId"
-    @submitForm = "handleDelete"
-    @cancelForm = "handleCancel"
-    >
+      v-if="accountId !== null"
+      :showModalDeleteAccount="showModalDeleteAccount"
+      :accountId="accountId"
+      @submitForm="handleDelete"
+      @cancelForm="handleCancel">
     </ModalDeleteAccount>
+    <Notification :message="errors.message" :key="errors.message" />
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import ModalSignUp from '../components/ModalSignUp.vue';
+import ModalSignUp from "../components/ModalSignUp.vue";
 import ModalDeleteAccount from "../components/ModalDeleteAccount.vue";
+import Notification from "../components/Notification.vue";
 export default {
   name: "BoardAccount",
   data() {
@@ -71,12 +78,14 @@ export default {
       accountId: null,
       showModalSignUp: false,
       showModalDeleteAccount: false,
-      timeout: null
+      timeout: null,
+      errors: [],
     };
   },
   components: {
     ModalSignUp,
-    ModalDeleteAccount
+    ModalDeleteAccount,
+    Notification,
   },
   mounted() {
     this.getListAccounts();
@@ -87,7 +96,13 @@ export default {
         const res = await axios.get("/api/accounts");
         this.account = res.data;
       } catch (error) {
-        console.log(error);
+        if (error.response) {
+          for (const property in error.response.data) {
+            this.errors.message = `${error.response.data[property]}`;
+          }
+        } else {
+          this.errors.message = "Something went wrong. Please try again";
+        }
       }
     },
     addAccount() {
@@ -107,7 +122,27 @@ export default {
     deleteAccount(id) {
       this.showModalDeleteAccount = true;
       this.accountId = id;
-    }
+    },
+    async grantPermission(id, role) {
+      try {
+        const endpoint = `/api/editRole/${id}`;
+        const formData = { role };
+
+        if (role === "admin") {
+          formData.role = "user"; 
+        } else if (role === "user") {
+          formData.role = "admin"; 
+        } else {
+          throw new Error("Invalid role specified");
+        }
+
+        const response = await axios.put(endpoint, formData);
+
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
   watch: {
     account: {
