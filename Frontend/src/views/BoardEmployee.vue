@@ -55,13 +55,13 @@
         </button>
       </div>
     </template>
-    <ModalEdit
+    <ModalEditAdmin
       v-if="employeeId !== null"
-      :showModalEdit="showModalEdit"
+      :showModalEditAdmin="showModalEditAdmin"
       :employeeId="employeeId"
       @submitForm="handleSubmit"
       @cancelForm="handleCancel">
-    </ModalEdit>
+    </ModalEditAdmin>
     <ModalAdd
       :showModalAdd="showModalAdd"
       @submitForm="handleSubmit"
@@ -80,20 +80,20 @@
 
 <script>
 import axios from "axios";
-import ModalEdit from "../components/ModalEdit.vue";
+import ModalEditAdmin from "../components/ModalEditAdmin.vue";
 import ModalAdd from "../components/ModalAdd.vue";
 import ModalDeleteEmployee from "../components/ModalDeleteEmployee.vue";
 export default {
   name: "BoardEmployee",
   components: {
-    ModalEdit,
+    ModalEditAdmin,
     ModalAdd,
     ModalDeleteEmployee,
   },
   data() {
     return {
       listEmployee: {},
-      showModalEdit: false,
+      showModalEditAdmin: false,
       showModalAdd: false,
       showModalDeleteEmployee: false,
       employeeId: null,
@@ -127,10 +127,10 @@ export default {
     },
     handleSubmit: function () {
       this.showModalAdd = false;
-      this.showModalEdit = false;
+      this.showModalEditAdmin = false;
     },
     handleCancel: function () {
-      this.showModalEdit = false;
+      this.showModalEditAdmin = false;
       this.showModalAdd = false;
       this.showModalDeleteEmployee = false;
     },
@@ -139,7 +139,7 @@ export default {
     },
     getEmployeeId(id) {
       this.employeeId = id;
-      this.showModalEdit = true;
+      this.showModalEditAdmin = true;
     },
     addEmployee() {
       this.showModalAdd = true;

@@ -243,7 +243,7 @@ export default {
           },
         };
         await axios
-          .put(`/api/employees/${this.employeeId}`, formData, config)
+          .put(`/api/user/employees/${this.employeeId}`, formData, config)
           .then((response) => {
             this.$emit("submitForm");
           })

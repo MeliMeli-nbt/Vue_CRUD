@@ -305,10 +305,10 @@ router.get("/edit/:id", verifyToken, async (req, res) => {
   }
 });
 
-router.put("/employees/:id", verifyToken, async (req, res) => {
+router.put("/admin/employees/:id", verifyToken, async (req, res) => {
   try {
     let currentUser = req.user;
-    if (authorizedRoles.includes(currentUser.role)) {
+    if (currentUser.role === "admin") {
       const employee = await Employee.findOne({
         where: {
           id: req.params.id,
@@ -335,6 +335,35 @@ router.put("/employees/:id", verifyToken, async (req, res) => {
   }
 });
 
+router.put("/user/employees/:id", verifyToken, async (req, res) => {
+  try {
+    let currentUser = req.user;
+    if (currentUser.role === 'user') {
+      const employee = await Employee.findOne({
+        where: {
+          id: req.params.id,
+        },
+      });
+
+      const { name, age, gender, address, email, phone } = req.body;
+      await employee.set({
+        name: name,
+        age: age,
+        gender: gender,
+        email: email,
+        address: address,
+        phone: phone,
+      });
+      await employee.save();
+      res.status(200).json(employee);
+    }
+    else {
+      res.status(500).json({ message: 'You are not authorized to update employee records.' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 router.delete("/employees/:id", verifyToken, async (req, res) => {
   let currentUser = req.user;
