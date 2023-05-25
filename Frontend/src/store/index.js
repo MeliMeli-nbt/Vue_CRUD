@@ -41,7 +41,7 @@ export default createStore({
 
     clearAccountId(state) {
       state.accountId = [];
-      localStorage.removeItem("accountId");
+      localStorage.removeItem("CRUD_addEmployeeID");
       state.isAccountId = false;
     },
 

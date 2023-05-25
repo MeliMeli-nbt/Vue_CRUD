@@ -45,8 +45,14 @@ export default {
   },
   methods: {
     submitForm() {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("CRUD_tokenAccess")
+            }`,
+        },
+      };
       axios
-        .delete(`api/employees/${this.employeeId}`)
+        .delete(`api/employees/${this.employeeId}`, config)
         .then((response) => {
           this.$emit("submitForm");
         })

@@ -92,8 +92,14 @@ export default {
   },
   methods: {
     async getListAccounts() {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("CRUD_tokenAccess")
+            }`,
+        },
+      };
       try {
-        const res = await axios.get("/api/accounts");
+        const res = await axios.get("/api/accounts", config);
         this.account = res.data;
       } catch (error) {
         if (error.response) {
@@ -124,6 +130,12 @@ export default {
       this.accountId = id;
     },
     async grantPermission(id, role) {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("CRUD_tokenAccess")
+            }`,
+        },
+      };
       try {
         const endpoint = `/api/editRole/${id}`;
         const formData = { role };
@@ -136,7 +148,7 @@ export default {
           throw new Error("Invalid role specified");
         }
 
-        const response = await axios.put(endpoint, formData);
+        const response = await axios.put(endpoint, formData, config);
 
         console.log(response.data);
       } catch (error) {
@@ -144,17 +156,17 @@ export default {
       }
     },
   },
-  watch: {
-    account: {
-      deep: true,
-      handler() {
-        clearTimeout(this.timeout);
-        this.timeout = setTimeout(() => {
-          this.getListAccounts();
-        }, 500);
-      },
-    },
-  },
+  // watch: {
+  //   account: {
+  //     deep: true,
+  //     handler() {
+  //       clearTimeout(this.timeout);
+  //       this.timeout = setTimeout(() => {
+  //         this.getListAccounts();
+  //       }, 500);
+  //     },
+  //   },
+  // },
 };
 </script>
 <style scoped>

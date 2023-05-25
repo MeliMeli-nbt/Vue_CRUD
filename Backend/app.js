@@ -13,8 +13,8 @@ app.use((req, res, next) => {
 });
 
 app.use(cors({
-  origin: 'http://localhost:5174',
-  allowedHeaders: 'Content-Type'
+  origin: 'http://localhost:5173',
+  allowedHeaders: ['Content-Type', 'authorization']
 }));
 
 

@@ -136,12 +136,18 @@ export default {
           username: this.username,
           password: this.password,
         };
+        const config = {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("CRUD_tokenAccess")
+              }`,
+          },
+        };
         axios
-          .post("/api/accounts", formData)
+          .post("/api/accounts", formData, config)
           .then((response) => {
-            this.$router.push("/dashboard/boardEmployee");
             const id = response.data.account_id;
             this.$store.commit("setAccountId", id);
+            this.$router.push("/dashboard/boardEmployee");
           })
           .catch((error) => {
             if (error.response) {

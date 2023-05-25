@@ -78,10 +78,16 @@ export default {
     },
     async getEmployee() {
       this.error = [];
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("CRUD_tokenAccess")
+            }`,
+        },
+      };
       try {
         const response = await axios.get(
           `/api/employees/${this.currentUser.account_id}`
-        );
+        , config);
         this.employee = response.data;
       } catch (error) {
         if (error.response) {
@@ -104,17 +110,17 @@ export default {
       this.showModalEdit = true;
     },
   },
-  watch: {
-    employee: {
-      deep: true,
-      handler() {
-        clearTimeout(this.timeout);
-        this.timeout = setTimeout(() => {
-          this.getEmployee();
-        }, 500);
-      },
-    },
-  },
+  // watch: {
+  //   employee: {
+  //     deep: true,
+  //     handler() {
+  //       clearTimeout(this.timeout);
+  //       this.timeout = setTimeout(() => {
+  //         this.getEmployee();
+  //       }, 500);
+  //     },
+  //   },
+  // },
 };
 </script>
 <style scoped>

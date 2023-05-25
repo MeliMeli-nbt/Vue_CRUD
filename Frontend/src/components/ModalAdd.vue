@@ -206,7 +206,7 @@ export default {
           "The phone cannot be blank, must be a number and length >= 10";
       }
       if (!this.errors.length) {
-        if (!localStorage.getItem("accountId")) {
+        if (!localStorage.getItem("CRUD_addEmployeeID")) {
           this.errors.message = "No account ID set in local storage";
         } else {
           const formData = {
@@ -218,8 +218,14 @@ export default {
             phone: this.phone,
             account_id: localStorage.getItem("CRUD_addEmployeeID"),
           };
+          const config = {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("CRUD_tokenAccess")
+                }`,
+            },
+          };
           axios
-            .post("/api/employees", formData)
+            .post("/api/employees", formData, config)
             .then((response) => {
               this.$store.commit("clearAccountId");
               this.$emit("submitForm");

@@ -106,8 +106,14 @@ export default {
   },
   methods: {
     async getListEmployees() {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("CRUD_tokenAccess")
+            }`,
+        },
+      };
       try {
-        const response = await axios.get("/api/employees");
+        const response = await axios.get("/api/employees", config);
         this.listEmployee = response.data;
       } catch (error) {
         if (error.response) {
@@ -144,17 +150,17 @@ export default {
       this.showModalDeleteEmployee = true;
     },
   },
-  watch: {
-    listEmployee: {
-      deep: true,
-      handler() {
-        clearTimeout(this.timeout);
-        this.timeout = setTimeout(() => {
-          this.getListEmployees();
-        }, 500);
-      },
-    },
-  },
+  // watch: {
+  //   listEmployee: {
+  //     deep: true,
+  //     handler() {
+  //       clearTimeout(this.timeout);
+  //       this.timeout = setTimeout(() => {
+  //         this.getListEmployees();
+  //       }, 500);
+  //     },
+  //   },
+  // },
 };
 </script>
 <style scoped>

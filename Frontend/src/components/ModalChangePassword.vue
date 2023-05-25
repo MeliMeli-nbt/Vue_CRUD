@@ -140,8 +140,14 @@ export default {
             crPass: this.crPass,
             newPass: this.newPass,
           };
+          const config = {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("CRUD_tokenAccess")
+                }`,
+            },
+          };
           axios
-            .put(`/api/changePassword/${currentUser.account_id}`, formData)
+            .put(`/api/changePassword/${currentUser.account_id}`, formData, config)
             .then((response) => {
               this.$emit("submitForm");
               this.cfPass = "";
