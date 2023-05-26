@@ -61,6 +61,14 @@
       @submitForm="handleDelete"
       @cancelForm="handleCancel">
     </ModalDeleteAccount>
+    <ModalPermission
+      :showModalPermission="showModalPermission"
+      :accountIdUpdate="accountIdUpdate"
+      :roleUpdate="roleUpdate"
+      @submitForm="handleSubmit"
+      @cancelForm="handleCancel"
+    >
+    </ModalPermission>
     <Notification :message="errors.message" :key="errors.message" />
   </div>
 </template>
@@ -69,6 +77,7 @@
 import axios from "axios";
 import ModalSignUp from "../components/ModalSignUp.vue";
 import ModalDeleteAccount from "../components/ModalDeleteAccount.vue";
+import ModalPermission from "../components/ModalPermission.vue";
 import Notification from "../components/Notification.vue";
 export default {
   name: "BoardAccount",
@@ -78,7 +87,10 @@ export default {
       accountId: null,
       showModalSignUp: false,
       showModalDeleteAccount: false,
+      showModalPermission: false,
       timeout: null,
+      accountIdUpdate: null,
+      roleUpdate: null,
       errors: [],
     };
   },
@@ -86,6 +98,7 @@ export default {
     ModalSignUp,
     ModalDeleteAccount,
     Notification,
+    ModalPermission
   },
   mounted() {
     this.getListAccounts();
@@ -117,6 +130,7 @@ export default {
 
     handleSubmit: function () {
       this.showModalSignUp = false;
+      this.showModalPermission = false;
     },
     handleCancel: function () {
       this.showModalSignUp = false;
@@ -129,31 +143,10 @@ export default {
       this.showModalDeleteAccount = true;
       this.accountId = id;
     },
-    async grantPermission(id, role) {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("CRUD_tokenAccess")
-            }`,
-        },
-      };
-      try {
-        const endpoint = `/api/editRole/${id}`;
-        const formData = { role };
-
-        if (role === "admin") {
-          formData.role = "user"; 
-        } else if (role === "user") {
-          formData.role = "admin"; 
-        } else {
-          throw new Error("Invalid role specified");
-        }
-
-        const response = await axios.put(endpoint, formData, config);
-
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
-      }
+    grantPermission(id, role) {
+      this.showModalPermission = true;
+      this.accountIdUpdate = id;
+      this.roleUpdate = role;
     },
   },
   // watch: {

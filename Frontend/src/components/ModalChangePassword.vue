@@ -137,6 +137,7 @@ export default {
         } else {
           let currentUser = JSON.parse(localStorage.getItem("CRUD_currentUser"))
           const formData = {
+            username: currentUser.username,
             crPass: this.crPass,
             newPass: this.newPass,
           };

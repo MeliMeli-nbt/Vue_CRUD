@@ -153,7 +153,8 @@ router.put("/editRole/:id", verifyToken, async (req, res) => {
 router.put("/changePassword/:id", verifyToken, async (req, res) => {
   try {
     let currentUser = req.user;
-    if (authorizedRoles.includes(currentUser.role)) {
+    let username = req.body.username;
+    if (authorizedRoles.includes(currentUser.role) && currentUser.username === username) {
       const account = await Account.findOne({
         where: { account_id: req.params.id },
       });
